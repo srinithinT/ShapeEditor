@@ -3,22 +3,31 @@ import React, { useRef } from "react";
 const Shape = ({ shape, updateShapePosition }) => {
   const shapeRef = useRef(null);
 
+  // Function to handle the drag
   const handleDragStart = (e) => {
+    // Get the bounding rectangle of the dragged element
     const rect = e.target.getBoundingClientRect();
     e.dataTransfer.setData("text/plain", `${rect.left},${rect.top}`);
   };
 
+  // Function to handle the ongoing drag operation
   const handleDrag = (e) => {
     if (e.clientX === 0 && e.clientY === 0) return;
+
     const canvasRect = e.target.parentNode.getBoundingClientRect();
+
     const x = e.clientX - canvasRect.left;
     const y = e.clientY - canvasRect.top;
+
     console.log(e.target, x, y, shape, canvasRect.width, "target element");
+
+    // Check if the new position is within the canvas boundaries
     if (x >= 0 && y >= 0 && x + shape.size <= canvasRect.width && y + shape.size <= canvasRect.height) {
       updateShapePosition(shape.id, x, y);
     }
   };
 
+  // Inline style object for the shape element
   const style = {
     position: "absolute",
     left: shape.x,

@@ -1,7 +1,8 @@
 import React from "react";
-import Shape from "./Shape";
+import Shape from "../components/Shape";
 
 const ShapeCanvas = ({ shapes, setShapes }) => {
+  // Function to update the position of a shape
   const updateShapePosition = (id, x, y) => {
     const updatedShapes = shapes.map((shape) => (shape.id === id ? { ...shape, x, y } : shape));
     setShapes(updatedShapes);
