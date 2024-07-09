@@ -1,33 +1,37 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 
 const Shape = ({ shape, updateShapePosition }) => {
-  const shapeRef = useRef(null);
+  const shapeRef = useRef(null); // Reference to the shape element
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
-  // Function to handle the drag
-  const handleDragStart = (e) => {
-    // Get the bounding rectangle of the dragged element
-    const rect = e.target.getBoundingClientRect();
-    e.dataTransfer.setData("text/plain", `${rect.left},${rect.top}`);
+  // Handle mouse down event to start dragging
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    const offsetX = e.nativeEvent.offsetX;
+    const offsetY = e.nativeEvent.offsetY;
+    setDragOffset({ x: offsetX, y: offsetY });
   };
 
-  // Function to handle the ongoing drag operation
-  const handleDrag = (e) => {
-    if (e.clientX === 0 && e.clientY === 0) return;
-
-    const canvasRect = e.target.parentNode.getBoundingClientRect();
-
-    const x = e.clientX - canvasRect.left;
-    const y = e.clientY - canvasRect.top;
-
-    console.log(e.target, x, y, shape, canvasRect.width, "target element");
-
-    // Check if the new position is within the canvas boundaries
-    if (x >= 0 && y >= 0 && x + shape.size <= canvasRect.width && y + shape.size <= canvasRect.height) {
-      updateShapePosition(shape.id, x, y);
+  // Handle mouse move event
+  const handleMouseMove = (e) => {
+    if (isDragging) {
+      const canvasRect = shapeRef.current.parentNode.getBoundingClientRect();
+      const x = e.clientX - canvasRect.left - dragOffset.x;
+      const y = e.clientY - canvasRect.top - dragOffset.y;
+      // Ensure the shape stays within the canvas boundaries
+      if (x >= 0 && y >= 0 && x + shape.size <= canvasRect.width && y + shape.size <= canvasRect.height) {
+        updateShapePosition(shape.id, x, y);
+      }
     }
   };
 
-  // Inline style object for the shape element
+  // Handle mouse up event to stop dragging
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // Define the style for the shape element based on its type
   const style = {
     position: "absolute",
     left: shape.x,
@@ -48,7 +52,15 @@ const Shape = ({ shape, updateShapePosition }) => {
     }),
   };
 
-  return <div ref={shapeRef} style={style} draggable onDragStart={handleDragStart} onDrag={handleDrag}></div>;
+  return (
+    <div
+      ref={shapeRef}
+      style={style}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+    ></div>
+  );
 };
 
 export default Shape;

@@ -5,12 +5,11 @@ import "./App.css";
 
 const App = () => {
   // State to hold the list of shapes
-
   const [shapesState, setShapes] = useState([]);
 
   const addShape = () => {
     const type = shapes[Math.floor(Math.random() * shapes.length)]; // Randomly select a shape type
-    const color = colors[Math.floor(Math.random() * colors.length)]; // Randomly select a color type
+    const color = colors[Math.floor(Math.random() * colors.length)]; // Randomly select a color
     const size = Math.random() * 50; // Random size
     const x = Math.random() * 400; // Random x-coordinate
     const y = Math.random() * 400; // Random y-coordinate
@@ -18,7 +17,7 @@ const App = () => {
     // Add the new shape to the state
     setShapes([...shapesState, { id: shapesState.length, type, color, size, x, y }]);
   };
-  console.log(shapesState, "shapesState");
+
   // Function to print the shapes state as JSON to the console
   const printJSON = () => {
     const json = JSON.stringify(shapesState);
